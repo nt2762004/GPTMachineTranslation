@@ -1,0 +1,2 @@
+Link non-pretrain: https://www.kaggle.com/code/tneduvn/gpt-mt
+Link pretrain: https://www.kaggle.com/code/tneduvn/gpt-mt-pre
