@@ -1,4 +1,4 @@
-# GPT Machine Translate Project
+# GPT Machine Translate
 
 Dự án này thực hiện dịch máy (Machine Translation) Anh-Việt sử dụng kiến trúc GPT (Generative Pre-trained Transformer). Dự án bao gồm cả phương pháp huấn luyện từ đầu (training from scratch) và tinh chỉnh mô hình đã huấn luyện trước (fine-tuning pretrained model).
 
