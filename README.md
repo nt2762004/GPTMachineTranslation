@@ -7,7 +7,6 @@ This project performs English-Vietnamese Machine Translation using GPT (Generati
 ```
 ├── gpt-mt-pre.ipynb              # Notebook for fine-tuning GPT-2
 ├── gpt-mt.ipynb                  # Notebook for training GPT from scratch
-├── Link_GPT_MachineTranslate.txt # Kaggle Link
 ├── README.md                     # Project description file
 ├── en-vi.txt/                    # Original bilingual data (TED2020)
 └── Train_spm/                    # Folder for training SentencePiece Tokenizer
