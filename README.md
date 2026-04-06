@@ -2,6 +2,8 @@
 
 This project performs English-Vietnamese Machine Translation using GPT (Generative Pre-trained Transformer) architecture. The project includes both training from scratch and fine-tuning a pretrained model.
 
+Link Deployed: https://gptmachinetranslation.streamlit.app/
+
 ## Folder Structure
 
 ```
