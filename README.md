@@ -1,74 +1,81 @@
-# GPT Machine Translate Project
+# GPT Machine Translate
 
-Dự án này thực hiện dịch máy (Machine Translation) Anh-Việt sử dụng kiến trúc GPT (Generative Pre-trained Transformer). Dự án bao gồm cả phương pháp huấn luyện từ đầu (training from scratch) và tinh chỉnh mô hình đã huấn luyện trước (fine-tuning pretrained model).
+This project performs English-Vietnamese Machine Translation using GPT (Generative Pre-trained Transformer) architecture. The project includes both training from scratch and fine-tuning a pretrained model.
 
-## Cấu trúc thư mục
+## Folder Structure
 
-- **`Train_spm/`**: Thư mục chứa mã nguồn và dữ liệu liên quan đến việc huấn luyện SentencePiece Tokenizer.
-  - `Train_spm.ipynb`: Notebook thực hiện tiền xử lý dữ liệu (làm sạch văn bản) và huấn luyện mô hình SentencePiece.
-  - `ted2020_spm.model`, `ted2020_spm.vocab`: Mô hình tokenizer và bộ từ vựng đã được huấn luyện.
-  - `cleaned.en`, `cleaned.vi`: Dữ liệu văn bản tiếng Anh và tiếng Việt sau khi đã được làm sạch.
-  - `gpt_data.txt`, `tokenized_gpt.txt`: Các file dữ liệu trung gian cho quá trình huấn luyện.
+```
+├── gpt-mt-pre.ipynb              # Notebook for fine-tuning GPT-2
+├── gpt-mt.ipynb                  # Notebook for training GPT from scratch
+├── Link_GPT_MachineTranslate.txt # Kaggle Link
+├── README.md                     # Project description file
+├── en-vi.txt/                    # Original bilingual data (TED2020)
+└── Train_spm/                    # Folder for training SentencePiece Tokenizer
+    ├── Train_spm.ipynb           # Notebook for training tokenizer
+    ├── ted2020_spm.model         # Tokenizer model
+    └── ...
+```
 
-- **`gpt-mt.ipynb`**: Notebook triển khai và huấn luyện mô hình GPT cho dịch máy từ đầu (Non-pretrained). Sử dụng tokenizer SentencePiece đã tạo ở bước trước.
+### `Train_spm/Train_spm.ipynb` (Data Preparation & Tokenizer)
+This notebook performs preprocessing steps and prepares the tokenizer for the model.
 
-- **`gpt-mt-pre.ipynb`**: Notebook sử dụng mô hình GPT-2 đã được huấn luyện trước (`GPT2LMHeadModel`) và tokenizer của nó (`GPT2Tokenizer`) để tinh chỉnh (fine-tune) cho tác vụ dịch máy.
+*   **Goal:** Clean text data and train SentencePiece Tokenizer model.
+*   **Main steps:**
+    *   **Preprocessing:**
+        *   Convert text to lowercase.
+        *   Remove unnecessary special characters, normalize spaces.
+    *   **Tokenization:**
+        *   Train a custom tokenizer on the TED2020 dataset using the `sentencepiece` library.
+        *   Create vocabulary (vocab) and tokenizer model (`.model`).
 
-- **`en-vi.txt/`**: Thư mục chứa dữ liệu song ngữ gốc (TED2020).
+### `gpt-mt.ipynb` (Training from Scratch)
+This notebook builds and trains a GPT model from the beginning (Non-pretrained).
 
-- **`Link_GPT_MachineTranslate.txt`**: File chứa liên kết đến các notebook gốc trên Kaggle.
+*   **Goal:** Build and train a Transformer Decoder model for machine translation tasks.
+*   **Main steps:**
+    *   **Load Tokenizer:** Use the tokenizer created in the previous step.
+    *   **Data Formatting:** Prepare sentence pairs `Source: [English] Target: [Vietnamese]`.
+    *   **Build Model:**
+        *   Transformer Decoder architecture (Embedding, Positional Encoding, Multi-head Self-Attention, Feed Forward Network).
+    *   **Training:**
+        *   Use **CrossEntropyLoss** and **AdamW** optimizer.
+        *   Apply **Teacher Forcing**.
+    *   **Evaluation:**
+        *   Use **BLEU Score** to evaluate accuracy.
+        *   Inference using Greedy Search method.
 
-## Quy trình Modeling (Modeling Flow)
+### `gpt-mt-pre.ipynb` (Fine-tuning GPT-2)
+This notebook uses a pretrained GPT-2 model to fine-tune for translation tasks.
 
-Dự án tuân theo quy trình modeling chuẩn trong NLP cho bài toán dịch máy:
+*   **Goal:** Use knowledge from the Pretrained model to improve translation quality.
+*   **Main steps:**
+    *   **Load Pretrained Model:** Use `GPT2LMHeadModel` and `GPT2Tokenizer` from the `transformers` library.
+    *   **Fine-tuning:** Adjust model weights on the English-Vietnamese dataset.
+    *   **Evaluation:** Use **ROUGE Score** to evaluate coverage.
 
-### 1. Tiền xử lý dữ liệu (Data Preprocessing)
-- **Làm sạch (Cleaning)**: Chuyển văn bản về chữ thường, loại bỏ các ký tự đặc biệt không cần thiết, chuẩn hóa khoảng trắng.
-- **Định dạng (Formatting)**:
-  - Dữ liệu được định dạng theo cặp câu: `Source: [English sentence] Target: [Vietnamese sentence]`.
-  - Đối với mô hình GPT (Causal Language Modeling), mô hình sẽ học cách dự đoán token tiếp theo dựa trên chuỗi token trước đó.
+## Installation Requirements
 
-### 2. Tokenization
-- **Non-pretrained**:
-  - Sử dụng thư viện `sentencepiece` để huấn luyện một tokenizer riêng trên tập dữ liệu TED2020.
-  - Tạo ra bộ từ vựng (vocab) và mô hình tokenizer (`.model`) phù hợp với đặc thù dữ liệu Anh-Việt.
-- **Pretrained**:
-  - Sử dụng `GPT2Tokenizer` có sẵn của mô hình GPT-2.
-  - Tận dụng khả năng hiểu ngôn ngữ đã học được từ trước.
+To run these notebooks, you need to install the following Python libraries:
 
-### 3. Xây dựng Mô hình (Model Architecture)
-- **Non-pretrained (Training from Scratch)**:
-  - Xây dựng kiến trúc Transformer Decoder từ đầu.
-  - Bao gồm các lớp: Embedding, Positional Encoding, Multi-head Self-Attention, Feed Forward Network.
-- **Pretrained (Fine-tuning)**:
-  - Sử dụng `GPT2LMHeadModel` từ thư viện `transformers`.
-  - Tinh chỉnh (Fine-tune) trọng số của mô hình trên tập dữ liệu dịch máy mới.
+```bash
+pip install torch transformers sentencepiece nltk numpy
+```
 
-### 4. Huấn luyện (Training)
-- Sử dụng hàm mất mát **CrossEntropyLoss**.
-- Tối ưu hóa bằng thuật toán **AdamW**.
-- Sử dụng **Teacher Forcing** (trong quá trình training, đầu vào là chuỗi đích thực tế thay vì dự đoán của mô hình).
+## Streamlit Preference App
 
-### 5. Đánh giá (Evaluation)
-- **Inference**: Sử dụng phương pháp Greedy Search (chọn token có xác suất cao nhất) để sinh câu dịch.
-- **Metrics**:
-  - **BLEU Score**: Đánh giá độ chính xác của bản dịch dựa trên n-grams trùng khớp với câu tham chiếu.
-  - **ROUGE Score**: Đánh giá độ bao phủ (recall) của bản dịch (sử dụng trong notebook fine-tuning).
+The repository also includes a Streamlit app that loads the trained checkpoint in `output/best_model.pt` and the SentencePiece tokenizer in `output/ted2020_spm.model`.
 
-## Hướng dẫn sử dụng
+Run it with:
 
-1. **Chuẩn bị dữ liệu và Tokenizer**:
-   - Mở và chạy notebook `Train_spm/Train_spm.ipynb`.
-   - Quá trình này sẽ đọc dữ liệu gốc, làm sạch văn bản và huấn luyện SentencePiece tokenizer. Kết quả sẽ tạo ra các file trong thư mục `Train_spm/`.
+```bash
+streamlit run app.py
+```
 
-2. **Huấn luyện mô hình**:
-   - **Cách 1: Huấn luyện từ đầu (Non-pretrained)**
-     - Notebook này sẽ load tokenizer từ `Train_spm/` và huấn luyện mô hình GPT trên dữ liệu đã chuẩn bị.
-   
-   - **Cách 2: Fine-tune Pretrained Model**
-     - Notebook này sử dụng thư viện `transformers` để tải mô hình GPT-2 và fine-tune trên tập dữ liệu Anh-Việt.
+The app generates greedy, beam, and sampling candidates for a source sentence, then lets you record which output you prefer. Preferences are saved to `output/preferences.csv`.
 
-## Link Kaggle
+---
 
-- Link Kaggle Non-pretrain: [https://www.kaggle.com/code/tneduvn/gpt-mt](https://www.kaggle.com/code/tneduvn/gpt-mt)
-- Link Kaggle Pretrain: [https://www.kaggle.com/code/tneduvn/gpt-mt-pre](https://www.kaggle.com/code/tneduvn/gpt-mt-pre)
+## Kaggle Links
+
+*   [Non-pretrain Version](https://www.kaggle.com/code/tneduvn/gpt-mt)
+*   [Pretrain Version](https://www.kaggle.com/code/tneduvn/gpt-mt-pre)
