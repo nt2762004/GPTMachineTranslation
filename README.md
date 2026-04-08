@@ -76,7 +76,7 @@ The app generates greedy, beam, and sampling candidates for a source sentence, t
 
 ---
 
-## Kaggle Links
+## Details in Kaggle Links
 
 *   [Non-pretrain Version](https://www.kaggle.com/code/tneduvn/gpt-mt)
 *   [Pretrain Version](https://www.kaggle.com/code/tneduvn/gpt-mt-pre)
