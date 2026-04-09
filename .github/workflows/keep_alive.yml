@@ -1,8 +1,7 @@
 name: Wake up Streamlit App
 on:
   schedule:
-    # Thay đổi thành 30 hoặc 60 phút để GitHub chạy ổn định hơn
-    - cron: '*/30 * * * *'
+    - cron: '*/10 * * * *'
   workflow_dispatch:
 
 jobs:
@@ -12,21 +11,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Install Playwright
         run: |
           npm install playwright
           npx playwright install chromium --with-deps
 
-      - name: Run Playwright to wake up app
-        run: |
-          node - e "
-          const { chromium } = require('playwright');
-          (async () => {
-            const browser = await chromium.launch();
-            const page = await browser.newPage();
-            await page.goto('https://gptmachinetranslation.streamlit.app/', { waitUntil: 'networkidle' });
-            console.log('Page title:', await page.title());
-            await page.waitForTimeout(5000); // Đợi 5s để đảm bảo JS đã chạy
-            await browser.close();
-          })();
-          "
+      - name: Run script to wake up app
+        run: node .github/workflows/wake_up.js
